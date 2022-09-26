@@ -3,4 +3,5 @@ inst/doc
 *.Rproj
 .DS_Store
 ._.DS_Store
+./inst/.DS_Store
 .Rhistory

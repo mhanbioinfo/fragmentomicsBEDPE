@@ -1,0 +1,42 @@
+Package: fragmentomicsBEDPE
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Depends:
+    R (>= 4.0.0)
+Imports:
+    BSgenome, 
+    BSgenome.Hsapiens.UCSC.hg38, 
+    data.table, 
+    GenomeInfoDb,
+    GenomicAlignments, 
+    GenomicRanges, 
+    IRanges, 
+    matrixStats,
+    methods,
+    Rsamtools,
+    biovizBase, 
+    ggplot2, 
+    rtracklayer, 
+    tibble, 
+    tidyverse
+Collate: 
+    'BEDPE_read_and_filter_forFrag.R'
+    'frag.fragSetClass_createFragSet.R'
+    'frag.showAndGetterFunctions.R'
+    'frag.compareToHealthy.R'
+    'frag.gen100kbBins.R'
+    'frag.gen5MbBins.R'
+    'frag.genMitoReport.R'
+    'frag.writeOutputAndPlots.R'
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

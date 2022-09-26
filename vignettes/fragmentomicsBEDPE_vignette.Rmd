@@ -1,0 +1,184 @@
+---
+title: "fragmentomicsBEDPE"
+author: "Ming Han"
+date: "2022-08-06"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{fragmentomicsBEDPE_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+# library(devtools)
+# load_all("./")
+```
+
+# introduction
+
+The fragmentomicsBEDPE R package peforms fragmentomics analysis on whole genome sequencing data. Fragmentomics analysis assess 2 main metrics: the short to long fragment ratio (hereafter as "ratio"), short fragment coverage (hereafter as "coverage"), as well as combination of ratio*coverage (hereafter as "combined") in 5Mb bins throughout the entire genome.
+
+The package then compares a sample's ratio, coverage and combined metrics against healthy median, and generate 2 additional metrics: correlation to healthy median, and distance to healthy median.
+
+This package packages scripts from Derek Wong's fragmentomics pipeline (https://github.com/derekwong90/fragmentomics/), which was based on DELPHI (https://github.com/cancer-genomics/delfi_scripts).
+
+# Installation
+
+```{r setup}
+#devtools::install_github("")
+library(tidyverse)
+library(fragmentomicsBEDPE)
+```
+
+# Example analysis
+
+## Get resource files
+
+```{r}
+filters=system.file("extdata", "filters.hg38.rda", package = "fragmentomicsBEDPE")
+gaps=system.file("extdata", "gaps.hg38.rda", package = "fragmentomicsBEDPE")
+VNTRs=system.file("extdata", "VNTRs.hg38.rda", package = "fragmentomicsBEDPE")
+tiles=system.file("extdata", "hg38_tiles.bed", package = "fragmentomicsBEDPE")
+healthy=system.file("extdata", "healthy.median.hg38.rda", package = "fragmentomicsBEDPE")
+```
+
+## Create FragSet object
+
+createFragSet() will read in BAM or BEDPE input file for a sample, filter reads based on SAM FLAG, fragment width, and mapQ threshold. Then stores all fragments in a GRanges object with GC content information from the reference genome specified. This frags GRanges object is stored in the "frags" slot. Fragments mapping to mitochondrial genome is stored in a separate GRanges object and stored in the "mito" slot.
+
+### BAM input example
+
+```{r message=FALSE}
+example_bam_filepath=system.file("extdata", "example_file.bam", package = "fragmentomicsBEDPE")
+fset = createFragSet(sampleID = "example_bam",
+                     filePath = example_bam_filepath,
+                     fileType = "bam",
+                     refGenome="BSgenome.Hsapiens.UCSC.hg38",
+                     chr.select=paste0("chr",1:22),
+                     width_min=90, width_max=220, mapQthreshold=30,
+                     keepDuplicates=FALSE, keepSecondaryAlignments=FALSE)
+fset
+```
+
+### BEDPE input example
+
+```{r}
+example_bedpe_filepath=system.file("extdata", "example_file_coordSortd.bedpe.gz", package = "fragmentomicsBEDPE")
+fset = createFragSet(sampleID = "example_bedpe",
+                     filePath = example_bedpe_filepath,
+                     fileType = "bedpe",
+                     refGenome="BSgenome.Hsapiens.UCSC.hg38",
+                     chr.select=paste0("chr",1:22),
+                     width_min=90, width_max=220, mapQthreshold=30,
+                     keepDuplicates=FALSE, keepSecondaryAlignments=FALSE)
+fset
+```
+
+## Analyze fragmentomics profile
+
+### Generate mitochondrial fragmentomics report
+
+example file has too few mitochondrial reads to run, please try your own full sized BAM or BEDPE file
+
+```{r}
+# fset = genMitoReport(fset)
+```
+
+### Generate 100kb bin fragmentomics profile
+
+```{r}
+fset = gen100kbBins(fset, filters=filters, gaps=gaps, VNTRs=VNTRs, tiles=tiles)
+```
+
+### Generate 5Mb bin fragmentomics profile
+
+By merging 100kb bins
+
+```{r}
+fset = gen5MbBins(fset)
+```
+
+### Compare fragmentomics profile of sample to healthy median
+
+```{r}
+fset = compareToHealthy(fset, healthy=healthy)
+```
+
+## Get analysis outputs from fset object
+
+### Get mitochondrial fragmentomics report
+
+example file has too few mitochondrial reads to run, please try your own full sized BAM or BEDPE file
+
+```{r}
+# getMitoReport(fset)
+```
+
+### Get 100kb bin fragmentomics profile
+
+```{r}
+bins100kb = get100kbBins(fset)
+print.data.frame(head(bins100kb[,1:35],3))
+```
+
+### Get 5Mb bin fragmentomics profile
+
+```{r}
+bins5Mb = get5MbBins(fset)
+print.data.frame(head(bins5Mb,3))
+```
+
+### Get 5Mb bin sample distance to healthy median
+
+```{r}
+dist5Mb = get5MbDist(fset)
+print.data.frame(head(dist5Mb,3))
+```
+
+### Get summary of fragmentomics profile averaged across the genome
+
+```{r}
+summary5Mb = get5MbSummary(fset)
+print.data.frame(summary5Mb)
+```
+
+## Get QC outputs from fset object
+
+### Get high coverage regions
+
+```{r}
+getHighCovRegions(fset)
+```
+
+### Get coverage statistics
+
+```{r}
+getCovStats(fset)
+```
+
+## Write out results and plots
+
+### Write out all text based results files
+
+```{r}
+outdir_path = "/full/path/to/output/some_example_file/"
+# outputAllResults(fset, outdir=outdir_path)
+```
+
+### Write out plots for GC bias correction
+
+```{r}
+# outputGCcorrectPlots(fset, outdir=outdir_path)
+```
+
+### Write out plots for fragmentation profile
+
+```{r}
+# outputFragPlots(fset, healthy=healthy, outdir=outdir_path)
+```
+
+## EOF

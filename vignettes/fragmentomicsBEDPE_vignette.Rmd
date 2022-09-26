@@ -1,7 +1,7 @@
 ---
 title: "fragmentomicsBEDPE"
 author: "Ming Han"
-date: "2022-08-06"
+date: "2022-09-26"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{fragmentomicsBEDPE_vignette}
@@ -29,7 +29,7 @@ This package packages scripts from Derek Wong's fragmentomics pipeline (https://
 # Installation
 
 ```{r setup}
-#devtools::install_github("")
+#devtools::install_github("mhanbioinfo/fragmentomicsBEDPE")
 library(tidyverse)
 library(fragmentomicsBEDPE)
 ```

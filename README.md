@@ -11,8 +11,10 @@ This package packages scripts from Derek Wong’s fragmentomics pipeline (https:
 ## Installation
 
 ```
-devtools::install_github("mhanbioinfo/fragmentomicsBEDPE")
+require(devtools)
 require(tidyverse)
+devtools::install_github("mhanbioinfo/fragmentomicsBEDPE")
+
 library(fragmentomicsBEDPE)
 ```
 Please follow vignette for example run (https://github.com/mhanbioinfo/fragmentomicsBEDPE/blob/main/vignettes/fragmentomicsBEDPE_vignette.Rmd)

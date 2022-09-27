@@ -29,9 +29,9 @@ This package packages scripts from Derek Wong's fragmentomics pipeline (https://
 # Installation
 
 ```{r setup}
-require(tidyverse)
-require(BSgenome.Hsapiens.UCSC.hg38)
-require(devtools)
+suppressPackageStartupMessages(require(tidyverse))
+suppressPackageStartupMessages(require(BSgenome.Hsapiens.UCSC.hg38))
+suppressPackageStartupMessages(require(devtools))
 #devtools::install_github("mhanbioinfo/fragmentomicsBEDPE")
 
 library(fragmentomicsBEDPE)
